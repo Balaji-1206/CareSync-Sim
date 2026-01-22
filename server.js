@@ -5,38 +5,32 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// store latest data in memory
+// In-memory storage (latest data only)
 let latestVitals = null;
 
-// home check
+// Health check
 app.get("/", (req, res) => {
-  res.send("✅ CareSync backend is running");
+  res.send("Backend running");
 });
 
-// receive data from Wokwi (POST)
+// Receive data from Wokwi
 app.post("/vitals", (req, res) => {
   latestVitals = req.body;
-
-  console.log("📥 Data received from Wokwi:");
-  console.log(latestVitals);
-
-  res.json({ status: "received" });
+  console.log("📥 Received vitals:", latestVitals);
+  res.json({ status: "ok" });
 });
 
-// view latest data (GET)
+// View latest data in browser
 app.get("/vitals", (req, res) => {
-  if (!latestVitals) {
+  res.setHeader("Content-Type", "application/json");
+  if (latestVitals === null) {
     return res.json({ message: "No data received yet" });
   }
   res.json(latestVitals);
 });
 
-// start server
+// Start server (Render-compatible)
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`🚀 Backend listening on port ${PORT}`);
-});
-app.post("/vitals", (req, res) => {
-  console.log("🔥 POST /vitals RECEIVED");
-  res.json({ received: true });
+  console.log("🚀 Server listening on port", PORT);
 });
