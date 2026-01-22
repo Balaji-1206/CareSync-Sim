@@ -5,15 +5,15 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Store latest data in memory (simple & enough for now)
+// store latest data in memory
 let latestVitals = null;
 
-// -------- HOME ROUTE --------
+// home check
 app.get("/", (req, res) => {
   res.send("✅ CareSync backend is running");
 });
 
-// -------- RECEIVE DATA FROM WOKWI --------
+// receive data from Wokwi (POST)
 app.post("/vitals", (req, res) => {
   latestVitals = req.body;
 
@@ -23,7 +23,7 @@ app.post("/vitals", (req, res) => {
   res.json({ status: "received" });
 });
 
-// -------- VIEW DATA IN BROWSER --------
+// view latest data (GET)
 app.get("/vitals", (req, res) => {
   if (!latestVitals) {
     return res.json({ message: "No data received yet" });
@@ -31,7 +31,7 @@ app.get("/vitals", (req, res) => {
   res.json(latestVitals);
 });
 
-// -------- START SERVER --------
+// start server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`🚀 Backend listening on port ${PORT}`);
